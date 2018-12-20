@@ -31,10 +31,11 @@ int showTimeDigit = 1;
 unsigned long lastUpdateClock = 0;
 unsigned long lastUpdateTemp = 0;
 unsigned long lastUpdateDot = 0;
-int digitMass[] = {0, 0, 0, 0, 2};
+int digitMass[] = {0, 0, 0, 0};                        // 3 разряд - 2 разряд -  1 разр - 0 разр
 int dsHour = 0;
 int dsMin = 0;
 int arduinoTemp = 0;
+int dotPointState = 0;
 
 void setup() {
 
@@ -78,7 +79,7 @@ void loop() {
     digitMass[1] = dsHour % 10;
     digitMass[2] = dsMin / 10;
     digitMass[3] = dsMin % 10;
-
+    dotPointState = !dotPointState;                         // каждую секунду меняем статус точки на индикаторе
     lastUpdateDot = millis();
   }
 
@@ -87,6 +88,13 @@ void loop() {
     for (int i = 0; i < 4; i++) {
       viborRaz(i);
       digit(digitMass[3 - i]);
+      // если выбран 1 разряд, то дополнительно вкл точку на индикаторе
+      // в остальных случаях точка не горит
+      if(i==1 and dotPointState){
+          digitalWrite(h, dotPointState);
+        }else{
+          digitalWrite(h, LOW);
+        }
       delay(showTimeDigit);
     }
   }
@@ -101,13 +109,13 @@ void loop() {
     unsigned long lastUpdate = millis();
     // цикл отрисовки чисeл из массива digitMass
     while (millis() - lastUpdate < 2500) {
-      for (int i = 0; i < 5; i++) {
-        if (i != 4) {
-          viborRaz(i);
-          digit(digitMass[3 - i]);
-        } else {
-          viborRaz(2);
+      for (int i = 0; i < 4; i++) {
+        viborRaz(i);
+        digit(digitMass[3 - i]);
+        if(i==1){
           digitalWrite(h, HIGH);
+        }else{
+          digitalWrite(h, LOW);
         }
         delay(showTimeDigit);
       }
