@@ -31,11 +31,11 @@ int showTimeDigit = 1;
 unsigned long lastUpdateClock = 0;
 unsigned long lastUpdateTemp = 0;
 unsigned long lastUpdateDot = 0;
-int digitMass[] = {0, 0, 0, 0};                        // 3 разряд - 2 разряд -  1 разр - 0 разр
+int digitMass[] = {1, 5, 7, 9};                        // 3 разряд - 2 разряд -  1 разр - 0 разр
 int dsHour = 0;
 int dsMin = 0;
 int arduinoTemp = 0;
-int dotPointState = 0;
+int dotPointState = 1;
 
 void setup() {
 
@@ -67,11 +67,11 @@ void setup() {
   digitalWrite(raz3, HIGH);
   lastUpdateClock = millis();
   lastUpdateDot = millis();
+  digitalWrite(a, 1);
 }
 
 void loop() {
   if (millis() - lastUpdateDot >= 1000) {
-    digitalWrite(dotPin, !digitalRead(dotPin));
     dt = clock.getDateTime();
     dsHour = dt.hour;
     dsMin = dt.minute;
@@ -84,56 +84,47 @@ void loop() {
   }
 
   // цикл отрисовки чисeл из массива digitMass
-  while (millis() - lastUpdateClock < 500) {
-    for (int i = 0; i < 4; i++) {
-      viborRaz(i);
-      digit(digitMass[3 - i]);
-      // если выбран 1 разряд, то дополнительно вкл точку на индикаторе
-      // в остальных случаях точка не горит
-      if(i==1 and dotPointState){
-          digitalWrite(h, dotPointState);
-        }else{
-          digitalWrite(h, LOW);
-        }
-      delay(showTimeDigit);
+  //while (millis() - lastUpdateClock < 500) {
+  for (int i = 0; i < 4; i++) {
+    viborRaz(i);
+    digit(digitMass[3 - i]);
+    // если выбран 2 разряд, то дополнительно вкл точку на индикаторе
+    // в остальных случаях точка не горит
+    delay(showTimeDigit);
+    if (i == 1 and dotPointState) {
+      digitalWrite(h, dotPointState);
+    } else {
+      digitalWrite(h, LOW);
     }
+
   }
-  lastUpdateClock = millis();
+  //}
+  //lastUpdateClock = millis();
 
   if (millis() - lastUpdateTemp >= 10000) {
     arduinoTemp = readTemp();
     digitMass[0] = arduinoTemp / 1000;
     digitMass[1] = arduinoTemp % 1000 / 100;
     digitMass[2] = arduinoTemp % 1000 % 100 / 10;
-    digitMass[3] = arduinoTemp % 1000 % 100 % 10;
+    digitMass[3] = 103;
     unsigned long lastUpdate = millis();
     // цикл отрисовки чисeл из массива digitMass
     while (millis() - lastUpdate < 2500) {
       for (int i = 0; i < 4; i++) {
         viborRaz(i);
         digit(digitMass[3 - i]);
-        if(i==1){
+        delay(showTimeDigit);
+        if (i == 1) {
           digitalWrite(h, HIGH);
-        }else{
+        } else {
           digitalWrite(h, LOW);
         }
-        delay(showTimeDigit);
       }
     }
     lastUpdateTemp = millis();
   }
 }
 
-/*unsigned long var = millis() / 1000;
-
-   while (millis() - lastUpdate < 500) {
-   // Разбиваем цифру по разрядам индикатора
-   viborRaz(3); digit(var / 1000);
-   viborRaz(2); digit((var % 1000) / 100);
-   viborRaz(1); digit((var % 100) / 10);
-   viborRaz(0); digit(var % 10);
-   }
-   lastUpdate = millis();*/
 // бегущая полоска
 /*viborRaz(0);
   digitalWrite(a, 1);
@@ -187,6 +178,7 @@ void nul() {
   digitalWrite(e, LOW);
   digitalWrite(f, LOW);
   digitalWrite(g, LOW);
+  digitalWrite(h, LOW);
 }
 
 void zero() {
@@ -289,6 +281,174 @@ void nine() {
   digitalWrite(g, HIGH);
 }
 
+// буквы латинского алфавита
+void simbol_A() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, LOW);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
+}
+
+void simbol_B() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, LOW);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
+}
+
+void simbol_C() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, LOW);
+  digitalWrite(c, LOW);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, LOW);
+}
+
+void simbol_D() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, LOW);
+  digitalWrite(g, LOW);
+}
+
+void simbol_E() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, LOW);
+  digitalWrite(c, LOW);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
+}
+
+void simbol_F() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, LOW);
+  digitalWrite(c, LOW);
+  digitalWrite(d, LOW);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
+}
+
+void simbol_G() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, LOW);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
+}
+
+void simbol_H() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, LOW);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
+}
+
+void simbol_I() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, LOW);
+  digitalWrite(e, LOW);
+  digitalWrite(f, LOW);
+  digitalWrite(g, LOW);
+}
+
+void simbol_J() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, LOW);
+  digitalWrite(f, LOW);
+  digitalWrite(g, LOW);
+}
+
+// букву К нельзя
+
+void simbol_L() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, LOW);
+  digitalWrite(c, LOW);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, LOW);
+}
+
+// букву M нельзя
+
+void simbol_O() {
+  zero();
+}
+
+void simbol_P() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, LOW);
+  digitalWrite(d, LOW);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
+}
+
+void simbol_S() {
+  five();
+}
+
+void simbol_U() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, LOW);
+}
+
+void simbol_V() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, LOW);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, LOW);
+  digitalWrite(g, LOW);
+}
+
+void simbol_Y() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, LOW);
+  digitalWrite(f, LOW);
+  digitalWrite(g, HIGH);
+}
+
+void simbol_Z() {
+  two();
+}
+
+
 void digit(int d) {
   switch (d) {
     case 0:
@@ -321,7 +481,10 @@ void digit(int d) {
     case 9:
       nine();
       break;
-    case 11:
+    case 103:
+      simbol_C();
+      break;
+    case 999:
       nul();
       break;
   }
